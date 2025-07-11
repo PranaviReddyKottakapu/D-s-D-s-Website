@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Store Offers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fEE1E8; /* Background color */
+        }
+        header {
+            background-color: #fd8a8a; /* Navigation bar color */
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .container {
+            width: 80%;
+            margin: 40px auto;
+            text-align: center;
+        }
+        select {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin: 20px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s;
+        }
+        select:focus {
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .store-option {
+            display: none;
+            cursor: pointer;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            overflow: hidden;
+            transition: transform 0.3s, opacity 0.3s;
+            text-align: left;
+        }
+        .store-option img {
+            width: 100%;
+            height: auto;
+        }
+        .store-option h2 {
+            margin: 0;
+            padding: 10px;
+            background: #333;
+            color: white;
+        }
+        .store {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            overflow: hidden;
+            display: none;
+            text-align: left;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        .store img {
+            width: 100%;
+            height: auto;
+        }
+        .store-content {
+            padding: 20px;
+        }
+        .store h2 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+        .store p {
+            margin: 0 0 15px;
+            color: #555;
+        }
+        .store a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: #f9c74f;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-align: center;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .store a.disabled {
+            background: #ccc;
+            pointer-events: none; /* Disable pointer events */
+        }
+        .store a:hover {
+            background: #f9844a;
+        }
+        /* Highlight effect */
+        .highlight-offer {
+            background-color: #f9c74f; /* Highlight color */
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Current Store Offers in Your City</h1>
+    </header>
+    <div class="container">
+        <select id="city-select" onchange="updateStores()">
+            <option value="">SELECT YOUR CITY</option>
+            <option value="city1">HYDERABAD</option>
+            <option value="city2">BENGALORE</option>
+            <option value="city3">CHENNAI</option>
+        </select>
+
+        <div id="store-options-container">
+            <!-- Store options will be dynamically added here -->
+        </div>
+
+        <div id="store1" class="store">
+            <img src="zuudio.jpg" alt="Store 1">
+            <div class="store-content">
+                <h2>ZUDIO</h2>
+                <p>Get 50% off on all electronics!</p>
+                <a href="#" onclick="viewOffer(this)">View Offer</a>
+            </div>
+        </div>
+
+        <div id="store2" class="store">
+            <img src="max.jpeg" alt="Store 2">
+            <div class="store-content">
+                <h2>MAX</h2>
+                <p>Buy one get one free on all clothing items!</p>
+                <a href="#" onclick="viewOffer(this)">View Offer</a>
+            </div>
+        </div>
+
+        <div id="store3" class="store">
+            <img src="ws.jpeg" alt="Store 3">
+            <div class="store-content">
+                <h2>WESTSIDE</h2>
+                <p>20% off on your first purchase!</p>
+                <a href="#" onclick="viewOffer(this)">View Offer</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const storeData = {
+            city1: [
+                { id: 'store1', name: 'ZUDIO', offer: 'Get 50% off on all electronics!', image: 'zuudio.jpg' },
+                { id: 'store2', name: 'MAX', offer: 'Buy one get one free on all clothing items!', image: 'max.jpeg' }
+            ],
+            city2: [
+                { id: 'store2', name: 'MAX', offer: 'Buy one get one free on all clothing items!', image: 'max.jpeg' },
+                { id: 'store3', name: 'WESTSIDE', offer: '20% off on your first purchase!', image: 'ws.jpeg' }
+            ],
+            city3: [
+                { id: 'store1', name: 'ZUDIO', offer: 'Get 50% off on all electronics!', image: 'zuudio.jpg' },
+                { id: 'store3', name: 'WESTSIDE', offer: '20% off on your first purchase!', image: 'ws.jpeg' }
+            ]
+        };
+
+        function updateStores() {
+            const citySelect = document.getElementById('city-select');
+            const storeOptionsContainer = document.getElementById('store-options-container');
+            const selectedCity = citySelect.value;
+
+            // Hide city select dropdown
+            citySelect.style.display = 'none';
+
+            // Clear previous store options
+            storeOptionsContainer.innerHTML = '';
+
+            if (selectedCity) {
+                const stores = storeData[selectedCity];
+
+                stores.forEach(store => {
+                    const storeOption = document.createElement('div');
+                    storeOption.className = 'store-option';
+                    storeOption.setAttribute('data-store-id', store.id);
+                    storeOption.onclick = showStore;
+                    storeOption.innerHTML = `
+                        <h2>${store.name}</h2>
+                        <img src="${store.image}" alt="${store.name}">
+                    `;
+                    storeOptionsContainer.appendChild(storeOption);
+                });
+
+                // Display store options
+                const storeOptions = document.getElementsByClassName('store-option');
+                for (const storeOption of storeOptions) {
+                    storeOption.style.display = 'block';
+                }
+            }
+        }
+
+        function viewOffer(link) {
+            // Disable the link to prevent multiple clicks
+            link.classList.add('disabled');
+            link.removeEventListener('click', viewOffer);
+
+            // Highlight the offer
+            const storeContent = link.parentNode;
+            storeContent.classList.add('highlight-offer');
+        }
+
+        function showStore(event) {
+            const selectedStoreId = event.currentTarget.getAttribute('data-store-id');
+            const storeOptionsContainer = document.getElementById('store-options-container');
+
+            // Hide store options
+            storeOptionsContainer.style.display = 'none';
+
+            // Hide all store offers
+            const storeDivs = document.getElementsByClassName('store');
+            for (const storeDiv of storeDivs) {
+                storeDiv.style.display = 'none';
+            }
+
+            // Show selected store offer
+            if (selectedStoreId) {
+                const selectedStore = document.getElementById(selectedStoreId);
+                selectedStore.style.display = 'block';
+                // Scroll to the selected store for better visibility
+                selectedStore.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>
